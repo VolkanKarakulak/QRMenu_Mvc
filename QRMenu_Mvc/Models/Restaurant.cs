@@ -13,12 +13,12 @@ namespace QRMenu_Mvc.Models
         [Column(TypeName = "nvarchar(30)")]
         public string Phone { get; set; } = "";
 
-        [StringLength(5, MinimumLength = 5)]
+        [StringLength(5, MinimumLength = 1)]
         [Column(TypeName = "char(5)")]
         [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; } = "";
 
-        [StringLength(200, MinimumLength = 5)]
+        [StringLength(200, MinimumLength = 1)]
         [Column(TypeName = "nvarchar(200)")]
         public string AddressDetail { get; set; } = "";
 
@@ -28,14 +28,14 @@ namespace QRMenu_Mvc.Models
         public byte StateId { get; set; }
 
         [ForeignKey("StateId")]
-        public State? State { get; set; }
+        public State? States { get; set; }
 
-        public int MainCompanyId { get; set; }
+        public int BrandId { get; set; }
 
-        [ForeignKey("MainCompanyId")]
-        public MainCompany? MainCompany { get; set; }
+        [ForeignKey("BrandId")]
+        public Brand? Brand { get; set; }
 
-        public virtual List<User>? Users { get; set; }
+        //public virtual List<AppUser>? AppUsers { get; set; }
 
         //public List<Category>? Categories { get; set; }
     }

@@ -7,16 +7,16 @@ namespace QRMenu_Mvc.Models
     {
             public int Id { get; set; }
 
-            [StringLength(200, MinimumLength = 2)]
+            [StringLength(200, MinimumLength = 1)]
             [Column(TypeName = "nvarchar(200)")]
             public string Name { get; set; } = "";
 
-            [StringLength(5, MinimumLength = 5)]
+            [StringLength(5, MinimumLength = 1)]
             [Column(TypeName = "char(5)")]
             [DataType(DataType.PostalCode)]
             public string PostalCode { get; set; } = "";
 
-            [StringLength(200, MinimumLength = 5)]
+            [StringLength(200, MinimumLength = 1)]
             [Column(TypeName = "nvarchar(200)")]
             public string Address { get; set; } = "";
 
@@ -32,7 +32,7 @@ namespace QRMenu_Mvc.Models
             [Column(TypeName = "smalldatetime")]
             public DateTime RegisterDate { get; set; }
 
-            [StringLength(11, MinimumLength = 10)]
+            [StringLength(11, MinimumLength = 1)]
             [Column(TypeName = "varchar(11)")]
             public string TaxNumber { get; set; } = "";
 
@@ -40,6 +40,6 @@ namespace QRMenu_Mvc.Models
             [Column(TypeName = "varchar(100)")]
             public string? WebbAddress { get; set; }
 
-            public List<Restaurant>? Restaurants { get; set; }
+         
     }
 }
