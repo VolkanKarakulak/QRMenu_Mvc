@@ -49,7 +49,7 @@ namespace QRMenu_Mvc.Controllers
         // GET: Restaurants/Create
         public IActionResult Create()
         {
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id");
+            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name");
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name");
             return View();
         }
@@ -67,7 +67,7 @@ namespace QRMenu_Mvc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", restaurant.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name", restaurant.BrandId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", restaurant.StateId);
             return View(restaurant);
         }
@@ -85,7 +85,7 @@ namespace QRMenu_Mvc.Controllers
             {
                 return NotFound();
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", restaurant.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name", restaurant.BrandId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", restaurant.StateId);
             return View(restaurant);
         }
@@ -122,7 +122,7 @@ namespace QRMenu_Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", restaurant.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name", restaurant.BrandId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", restaurant.StateId);
             return View(restaurant);
         }

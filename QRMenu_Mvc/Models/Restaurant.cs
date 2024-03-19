@@ -35,7 +35,7 @@ namespace QRMenu_Mvc.Models
         [ForeignKey("BrandId")]
         public Brand? Brand { get; set; }
 
-        //public virtual List<AppUser>? AppUsers { get; set; }
+        public virtual List<AppUser>? AppUsers { get; set; }
 
         //public List<Category>? Categories { get; set; }
     }

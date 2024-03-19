@@ -1,10 +1,10 @@
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using QRMenu_Mvc.Data;
 using QRMenu_Mvc.Models;
 using System;
-
-
 
 namespace QRMenu_Mvc
 {
@@ -20,12 +20,15 @@ namespace QRMenu_Mvc
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentity<AppUser,AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddDefaultTokenProviders()
+                //.AddUserManager<UserManager<AppUser>>()
+                //.AddSignInManager<SignInManager<AppUser>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAuthentication();
-            builder.Services.AddAuthorization();
-
+            //builder.Services.AddAuthorization();
+           
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,14 +47,16 @@ namespace QRMenu_Mvc
             app.UseStaticFiles();
 
             app.UseRouting();
+           //app.UseSession();
 
             app.UseAuthentication();
-            app.UseAuthorization();
+
+            //app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
+            //app.MapRazorPages();
 
             app.Run();
         }

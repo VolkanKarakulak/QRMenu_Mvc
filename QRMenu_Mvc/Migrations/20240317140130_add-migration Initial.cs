@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace QRMenu_Mvc.Migrations
 {
-    public partial class Initial : Migration
+    public partial class addmigrationInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -108,21 +108,21 @@ namespace QRMenu_Mvc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     SurName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PostalCode = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    StateId = table.Column<byte>(type: "tinyint", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    StateId = table.Column<byte>(type: "tinyint", nullable: true),
+                    BrandId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -263,6 +263,30 @@ namespace QRMenu_Mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppUserRestaurant",
+                columns: table => new
+                {
+                    AppUsersId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RestaurantsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUserRestaurant", x => new { x.AppUsersId, x.RestaurantsId });
+                    table.ForeignKey(
+                        name: "FK_AppUserRestaurant_AspNetUsers_AppUsersId",
+                        column: x => x.AppUsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_AppUserRestaurant_Restaurant_RestaurantsId",
+                        column: x => x.RestaurantsId,
+                        principalTable: "Restaurant",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Category",
                 columns: table => new
                 {
@@ -320,6 +344,11 @@ namespace QRMenu_Mvc.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppUserRestaurant_RestaurantsId",
+                table: "AppUserRestaurant",
+                column: "RestaurantsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -408,6 +437,9 @@ namespace QRMenu_Mvc.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppUserRestaurant");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

@@ -49,7 +49,7 @@ namespace QRMenu_Mvc.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Id");
+            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Name");
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name");
             return View();
         }
@@ -67,7 +67,7 @@ namespace QRMenu_Mvc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Id", category.RestaurantId);
+            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Name", category.RestaurantId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", category.StateId);
             return View(category);
         }
@@ -85,7 +85,7 @@ namespace QRMenu_Mvc.Controllers
             {
                 return NotFound();
             }
-            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Id", category.RestaurantId);
+            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Name", category.RestaurantId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", category.StateId);
             return View(category);
         }
@@ -122,7 +122,7 @@ namespace QRMenu_Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Id", category.RestaurantId);
+            ViewData["RestaurantId"] = new SelectList(_context.Set<Restaurant>(), "Id", "Name", category.RestaurantId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", category.StateId);
             return View(category);
         }
