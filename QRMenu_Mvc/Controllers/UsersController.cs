@@ -106,7 +106,7 @@ public class UsersController : Controller
             return NotFound();
         }
 
-        var user = _signInManager.UserManager.FindByIdAsync(id);
+        var user = await _signInManager.UserManager.FindByIdAsync(id);
         if (user == null)
         {
             return NotFound();
@@ -129,7 +129,7 @@ public class UsersController : Controller
             return NotFound();
         }
         applicationUser.StateId = 0;
-        _signInManager.UserManager.UpdateAsync(applicationUser);
+        await _signInManager.UserManager.UpdateAsync(applicationUser);
         return Ok();
     }
     public ViewResult LogIn()
