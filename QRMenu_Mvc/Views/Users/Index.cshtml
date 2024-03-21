@@ -25,7 +25,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.State)
             </th>
-           
             <th>
                 @Html.DisplayNameFor(model => model.Brand)
             </th>
@@ -60,7 +59,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.State.Name)
             </td>
-             <td>
+             @* <td>
                  @if (item.Restaurants?.Any() == true)
                  {
                     @foreach (var restaurant in item.Restaurants)
@@ -68,7 +67,7 @@
                             @restaurant.Name <br />
                     }
                  }
-            </td> 
+            </td>  *@
             <td>
                 @Html.DisplayFor(modelItem => item.Brand.Name)
             </td>

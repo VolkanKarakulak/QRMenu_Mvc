@@ -23,7 +23,7 @@ public class UsersController : Controller
     // GET: Users
     public async Task<IActionResult> Index()
     {
-        var users = await _signInManager.UserManager.Users.ToListAsync();
+        var users = await _signInManager.UserManager.Users.Include(u => u.State).Include(b => b.Brand).ToListAsync();
         return View(users);
     }
 
@@ -130,7 +130,7 @@ public class UsersController : Controller
         }
         applicationUser.StateId = 0;
         await _signInManager.UserManager.UpdateAsync(applicationUser);
-        return Ok();
+        return RedirectToAction("Index");
     }
     public ViewResult LogIn()
         {
