@@ -7,23 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using QRMenu_Mvc.Models;
+using QRMenu_Mvc.Data;
+using QRMenu_Mvc.Migrations;
+using System.Xml.Linq;
 
 namespace QRMenu_Mvc.Controllers
 {
-    public class RolesController : Controller
+    public class AppRolesController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-      
+        private readonly RoleManager<AppRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
-        public RolesController(RoleManager<IdentityRole> roleManager)
+        public AppRolesController(RoleManager<AppRole> roleManager, ApplicationDbContext context)
         {
             _roleManager = roleManager;
-          
+            _context = context;
         }
 
         // GET: Roles
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult> Index()
         {
+           // return View();
             return _roleManager.Roles.Any() ?
                 View(await _roleManager.Roles.ToListAsync()) :
                 Problem("No roles found.");
@@ -53,29 +59,14 @@ namespace QRMenu_Mvc.Controllers
 
         // POST: Roles/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string roleName)
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(string Name)
         {
-            if (ModelState.IsValid)
-            {
-                var role = new IdentityRole(roleName);
-                var result = await _roleManager.CreateAsync(role);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
-            }
+            AppRole appRole = new AppRole(Name);
+            await _roleManager.CreateAsync(appRole);
+            return RedirectToAction ("Index");
 
-            return View(roleName);
         }
-
         // GET: Roles/Edit/5
         public async Task<IActionResult> Edit(string id)
         {

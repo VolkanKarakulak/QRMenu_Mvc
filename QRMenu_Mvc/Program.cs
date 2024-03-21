@@ -22,7 +22,7 @@ namespace QRMenu_Mvc
 
             builder.Services.AddIdentity<AppUser,AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddDefaultTokenProviders()
-                //.AddUserManager<UserManager<AppUser>>()
+                //AddUserManager<UserManager<AppUser>>()
                 //.AddSignInManager<SignInManager<AppUser>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
