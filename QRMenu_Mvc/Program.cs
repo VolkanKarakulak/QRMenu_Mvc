@@ -1,4 +1,4 @@
-using Microsoft.AspNet.Identity.Owin;
+  using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,8 +27,10 @@ namespace QRMenu_Mvc
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAuthentication();
-            //builder.Services.AddAuthorization();
-           
+            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options => options.AddPolicy("CompAdmin", policy => policy.RequireClaim("BrandId")));
+            builder.Services.AddAuthorization(options => options.AddPolicy("RestAdmin", policy => policy.RequireClaim("RestaurantId")));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -51,11 +53,20 @@ namespace QRMenu_Mvc
 
             app.UseAuthentication();
 
-            //app.UseAuthorization();
+            app.UseAuthorization();
+
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+      
+            ApplicationDbContext? context = app.Services.CreateScope().ServiceProvider.GetService<ApplicationDbContext>();
+            RoleManager<AppRole>? roleManager = app.Services.CreateScope().ServiceProvider.GetService<RoleManager<AppRole>>();
+            UserManager<AppUser>? userManager = app.Services.CreateScope().ServiceProvider.GetService<UserManager<AppUser>>();
+            DBInitializer dBInitializer = new DBInitializer(context, roleManager, userManager);
+            //app.MapControllerRoute();
+            //name: "default",
+            //pattern: "{controller=Home}/{action=Index}/{id?}");
             //app.MapRazorPages();
 
             app.Run();

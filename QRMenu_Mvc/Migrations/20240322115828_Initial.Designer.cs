@@ -12,8 +12,8 @@ using QRMenu_Mvc.Data;
 namespace QRMenu_Mvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240319124013_Password2")]
-    partial class Password2
+    [Migration("20240322115828_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -232,6 +232,9 @@ namespace QRMenu_Mvc.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("char(5)");
 
+                    b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -280,6 +283,9 @@ namespace QRMenu_Mvc.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EMail")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
@@ -315,6 +321,8 @@ namespace QRMenu_Mvc.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
 
                     b.HasIndex("StateId");
 
@@ -575,7 +583,7 @@ namespace QRMenu_Mvc.Migrations
             modelBuilder.Entity("QRMenu_Mvc.Models.AppUser", b =>
                 {
                     b.HasOne("QRMenu_Mvc.Models.Brand", "Brand")
-                        .WithMany()
+                        .WithMany("AppUsers")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -593,6 +601,10 @@ namespace QRMenu_Mvc.Migrations
 
             modelBuilder.Entity("QRMenu_Mvc.Models.Brand", b =>
                 {
+                    b.HasOne("QRMenu_Mvc.Models.Brand", null)
+                        .WithMany("Brands")
+                        .HasForeignKey("BrandId");
+
                     b.HasOne("QRMenu_Mvc.Models.State", "State")
                         .WithMany()
                         .HasForeignKey("StateId")
@@ -605,7 +617,7 @@ namespace QRMenu_Mvc.Migrations
             modelBuilder.Entity("QRMenu_Mvc.Models.Category", b =>
                 {
                     b.HasOne("QRMenu_Mvc.Models.Restaurant", "Restaurant")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -624,7 +636,7 @@ namespace QRMenu_Mvc.Migrations
             modelBuilder.Entity("QRMenu_Mvc.Models.Food", b =>
                 {
                     b.HasOne("QRMenu_Mvc.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Foods")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -643,7 +655,7 @@ namespace QRMenu_Mvc.Migrations
             modelBuilder.Entity("QRMenu_Mvc.Models.Restaurant", b =>
                 {
                     b.HasOne("QRMenu_Mvc.Models.Brand", "Brand")
-                        .WithMany("Restaurants")
+                        .WithMany()
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -661,7 +673,19 @@ namespace QRMenu_Mvc.Migrations
 
             modelBuilder.Entity("QRMenu_Mvc.Models.Brand", b =>
                 {
-                    b.Navigation("Restaurants");
+                    b.Navigation("AppUsers");
+
+                    b.Navigation("Brands");
+                });
+
+            modelBuilder.Entity("QRMenu_Mvc.Models.Category", b =>
+                {
+                    b.Navigation("Foods");
+                });
+
+            modelBuilder.Entity("QRMenu_Mvc.Models.Restaurant", b =>
+                {
+                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

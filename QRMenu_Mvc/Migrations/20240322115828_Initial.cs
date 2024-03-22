@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace QRMenu_Mvc.Migrations
 {
-    public partial class addmigrationInitial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -90,11 +90,17 @@ namespace QRMenu_Mvc.Migrations
                     RegisterDate = table.Column<DateTime>(type: "smalldatetime", nullable: false),
                     TaxNumber = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
                     WebbAddress = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
-                    StateId = table.Column<byte>(type: "tinyint", nullable: false)
+                    StateId = table.Column<byte>(type: "tinyint", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Brand", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Brand_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brand",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Brand_State_StateId",
                         column: x => x.StateId,
@@ -112,8 +118,9 @@ namespace QRMenu_Mvc.Migrations
                     SurName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PostalCode = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    StateId = table.Column<byte>(type: "tinyint", nullable: true),
-                    BrandId = table.Column<int>(type: "int", nullable: true),
+                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StateId = table.Column<byte>(type: "tinyint", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -202,8 +209,8 @@ namespace QRMenu_Mvc.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -247,8 +254,8 @@ namespace QRMenu_Mvc.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -398,6 +405,11 @@ namespace QRMenu_Mvc.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Brand_BrandId",
+                table: "Brand",
+                column: "BrandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Brand_StateId",

@@ -13,6 +13,7 @@ namespace QRMenu_Mvc.Data
 
         public DbSet<Brand>? Brand { get; set; }
         public DbSet<Category>? Category { get; set; }
+        public DbSet<State>? State { get; set; }
         public DbSet<Food>? Food { get; set; }
         public DbSet<Restaurant>? Restaurant { get; set; }
         public DbSet<MainCompany>? MainCompany { get; set; }

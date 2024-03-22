@@ -37,6 +37,6 @@ namespace QRMenu_Mvc.Models
 
         public virtual List<AppUser>? AppUsers { get; set; }
 
-        //public List<Category>? Categories { get; set; }
+        public List<Category>? Categories { get; set; }
     }
 }

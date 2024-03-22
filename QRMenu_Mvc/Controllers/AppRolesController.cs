@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using QRMenu_Mvc.Models;
 using QRMenu_Mvc.Data;
-using QRMenu_Mvc.Migrations;
+
 using System.Xml.Linq;
 
 namespace QRMenu_Mvc.Controllers
@@ -59,10 +59,10 @@ namespace QRMenu_Mvc.Controllers
 
         // POST: Roles/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(string Name)
         {
-            AppRole appRole = new AppRole(Name);
+            AppRole appRole = new AppRole(Name); // daha kısa yolla yapabiliriz, diğer yöntemle yap ya da approle sil 
             await _roleManager.CreateAsync(appRole);
             return RedirectToAction ("Index");
 

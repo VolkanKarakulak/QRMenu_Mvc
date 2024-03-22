@@ -30,7 +30,7 @@ namespace QRMenu_Mvc.Models
         [ForeignKey("RestaurantId")]
         public Restaurant? Restaurant { get; set; }
 
-        //public virtual ICollection<Food> Foods { get; set; }
+        public virtual ICollection<Food>? Foods { get; set; }
 
     }
 }

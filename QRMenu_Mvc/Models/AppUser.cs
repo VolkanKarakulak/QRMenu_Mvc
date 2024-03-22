@@ -25,6 +25,9 @@ namespace QRMenu_Mvc.Models
         [Column(TypeName = "nvarchar(200)")]
         public string Address { get; set; } = "";
 
+       
+        public DateTime RegisterDate { get; set; }
+
         public byte StateId { get; set; }
 
         [ForeignKey("StateId")]
