@@ -28,7 +28,7 @@ namespace QRMenu_Mvc
             builder.Services.AddControllersWithViews();
             builder.Services.AddAuthentication();
             builder.Services.AddAuthorization();
-            builder.Services.AddAuthorization(options => options.AddPolicy("CompAdmin", policy => policy.RequireClaim("BrandId")));
+            builder.Services.AddAuthorization(options => options.AddPolicy("BrdAdmin", policy => policy.RequireClaim("BrandId")));
             builder.Services.AddAuthorization(options => options.AddPolicy("RestAdmin", policy => policy.RequireClaim("RestaurantId")));
 
             var app = builder.Build();

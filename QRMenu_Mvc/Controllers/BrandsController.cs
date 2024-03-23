@@ -14,6 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace QRMenu_Mvc.Controllers
 {
+    [Authorize(Roles = "Admin, BrandAdmin")]
     public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -63,7 +64,7 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,PostalCode,Address,Phone,EMail,RegisterDate,TaxNumber,WebbAddress,StateId")] Brand brand)
         {
             AppUser applicationUser = new AppUser();
@@ -73,15 +74,15 @@ namespace QRMenu_Mvc.Controllers
             _context.SaveChanges();
             applicationUser.BrandId = brand.Id;
             applicationUser.Email = "abc@def.com";
-            applicationUser.Name = "Administrator";
+            applicationUser.Name = "Admin";
             applicationUser.PhoneNumber = "1112223344";
             applicationUser.RegisterDate = DateTime.Today;
             applicationUser.StateId = 1;
-            applicationUser.UserName = "Administrator" + brand.Id.ToString();
+            applicationUser.UserName = "Admin" + brand.Id.ToString();
             _userManager.CreateAsync(applicationUser, "Admin123!").Wait();
             claim = new Claim("BrandId", brand.Id.ToString());
             _userManager.AddClaimAsync(applicationUser, claim).Wait();
-            _userManager.AddToRoleAsync(applicationUser, "CompanyAdministrator").Wait();
+            _userManager.AddToRoleAsync(applicationUser, "BrandAdmin").Wait();
             return RedirectToAction("Index");
         }
 
@@ -105,10 +106,10 @@ namespace QRMenu_Mvc.Controllers
         // POST: Brands/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost("{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "CompanyAdministrator")]
-        [Authorize(Policy = "CompAdmin")]
+        [Authorize(Roles = "BrandAdmin")]
+        [Authorize(Policy = "BrdAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PostalCode,Address,Phone,EMail,RegisterDate,TaxNumber,WebbAddress,StateId")] Brand brand)
         {
             if (User.HasClaim("BrandId", brand.Id.ToString()) == false)
@@ -166,6 +167,7 @@ namespace QRMenu_Mvc.Controllers
         // POST: Brands/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Brand == null)
