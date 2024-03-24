@@ -80,9 +80,9 @@ namespace QRMenu_Mvc.Controllers
             applicationUser.StateId = 1;
             applicationUser.UserName = "Admin" + brand.Id.ToString();
             _userManager.CreateAsync(applicationUser, "Admin123!").Wait();
+            _userManager.AddToRoleAsync(applicationUser, "BrandAdmin").Wait();
             claim = new Claim("BrandId", brand.Id.ToString());
             _userManager.AddClaimAsync(applicationUser, claim).Wait();
-            _userManager.AddToRoleAsync(applicationUser, "BrandAdmin").Wait();
             return RedirectToAction("Index");
         }
 

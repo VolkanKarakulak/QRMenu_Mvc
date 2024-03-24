@@ -82,7 +82,8 @@ public class UsersController : Controller
 
 
     [HttpPost]
-    //[ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(AppUser appUser)
     {
         AppUser existingAppUser = _signInManager.UserManager.FindByIdAsync(appUser.Id).Result;
@@ -92,7 +93,7 @@ public class UsersController : Controller
         existingAppUser.PhoneNumber = appUser.PhoneNumber;
         existingAppUser.StateId = appUser.StateId;
         existingAppUser.UserName = appUser.UserName;
-        _signInManager.UserManager.UpdateAsync(existingAppUser);
+       await _signInManager.UserManager.UpdateAsync(existingAppUser);
 
         return Ok();
     }

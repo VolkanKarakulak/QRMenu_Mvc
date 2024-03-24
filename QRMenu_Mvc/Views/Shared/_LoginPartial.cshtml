@@ -1,14 +1,51 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
+@inject RoleManager<AppRole> Manager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    
-}
-else
-{
-   
+@{
+        var user = await UserManager.GetUserAsync(User);
+        @if (!SignInManager.IsSignedIn(User))
+        {
+
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+            </li>
+        }
+        
+        @if (await UserManager.IsInRoleAsync(user, "Admin"))
+        {
+
+          
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="MainCompanies" asp-action="Index">MainCompanies</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+            </li>
+                
+        }
+        @if (await UserManager.IsInRoleAsync(user, "BrandAdmin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+            </li>
+        }
+        
+
+
 }
 </ul>

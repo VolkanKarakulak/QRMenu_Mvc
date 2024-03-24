@@ -49,7 +49,7 @@ namespace QRMenu_Mvc.Controllers
         // GET: Foods/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name");
             return View();
         }
@@ -67,7 +67,7 @@ namespace QRMenu_Mvc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", food.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", food.CategoryId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", food.StateId);
             return View(food);
         }
@@ -85,7 +85,7 @@ namespace QRMenu_Mvc.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", food.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", food.CategoryId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", food.StateId);
             return View(food);
         }
@@ -95,13 +95,9 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food)
+        public async Task<IActionResult> Edit([Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food)
         {
-            if (id != food.Id)
-            {
-                return NotFound();
-            }
-
+            
             if (ModelState.IsValid)
             {
                 try
@@ -122,7 +118,7 @@ namespace QRMenu_Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", food.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", food.CategoryId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", food.StateId);
             return View(food);
         }
