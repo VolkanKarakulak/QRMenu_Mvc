@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +60,7 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileName,StateId,RestaurantId")] Category category)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,StateId,RestaurantId")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -73,6 +74,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Category == null)
@@ -95,8 +97,14 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileName,StateId,RestaurantId")] Category category)
+        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
+
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StateId,RestaurantId")] Category category)
         {
+            if (User.HasClaim("RestaurantId", category.RestaurantId.ToString()) == false)
+            {
+                return Unauthorized();
+            }
             if (id != category.Id)
             {
                 return NotFound();
@@ -150,6 +158,7 @@ namespace QRMenu_Mvc.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Category == null)

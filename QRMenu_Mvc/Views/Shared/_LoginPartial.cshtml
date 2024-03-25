@@ -4,48 +4,60 @@
 @inject RoleManager<AppRole> Manager
 
 <ul class="navbar-nav">
-@{
-        var user = await UserManager.GetUserAsync(User);
+    @{
         @if (!SignInManager.IsSignedIn(User))
         {
-
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
             </li>
         }
-        
-        @if (await UserManager.IsInRoleAsync(user, "Admin"))
+        if (User.Identity.IsAuthenticated)
         {
+            var user = await UserManager.GetUserAsync(User);
+            if (user != null)
+            {
+                if (await UserManager.IsInRoleAsync(user, "Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="MainCompanies" asp-action="Index">MainCompanies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Brands" asp-action="Index">Brands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="LogOut">LogOut</a>
+                    </li>
+                }
+                if (await UserManager.IsInRoleAsync(user, "BrandAdmin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Brands" asp-action="Index">Brands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">LogOut</a>
+                    </li>
+                    
+                }
+                if (await UserManager.IsInRoleAsync(user, "RestaurantAdmin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">LogOut</a>
+                    </li>
 
-          
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="MainCompanies" asp-action="Index">MainCompanies</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
-            </li>
-                
+                }
+            }
         }
-        @if (await UserManager.IsInRoleAsync(user, "BrandAdmin"))
-        {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
-            </li>
-        }
-        
-
-
-}
+    }
 </ul>

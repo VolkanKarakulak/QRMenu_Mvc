@@ -20,7 +20,7 @@ namespace QRMenu_Mvc.Models
 
         [DisplayName("Görsel")]
         [StringLength(180)]
-        public string ImageFileName { get; set; } = "";
+        public string? ImageFileName { get; set; } 
 
         public int CategoryId { get; set; }
 

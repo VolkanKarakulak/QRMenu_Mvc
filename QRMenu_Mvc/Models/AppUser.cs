@@ -7,11 +7,11 @@ namespace QRMenu_Mvc.Models
 {
     public class AppUser : IdentityUser
     {
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 1)]
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; } = "";
 
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 1)]
         [Column(TypeName = "nvarchar(100)")]
         public string SurName { get; set; } = "";
 

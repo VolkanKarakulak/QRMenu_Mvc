@@ -16,10 +16,7 @@ namespace QRMenu_Mvc.Models
         [Column(TypeName = "nvarchar(200)")]
         public string? Description { get; set; }
 
-        [DisplayName("Görsel")]
-        [StringLength(180)]
-        public string ImageFileName { get; set; } = "";
-
+       
         public byte StateId { get; set; }
 
         [ForeignKey("StateId")]

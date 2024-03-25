@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,11 @@ namespace QRMenu_Mvc.Controllers
     public class FoodsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public FoodsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _environment;
+        public FoodsController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: Foods
@@ -59,12 +61,30 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food)
+        [Authorize(Roles = "RestaurantAdmin")]
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food, IFormFile ImageFileName)
         {
+            
             if (ModelState.IsValid)
             {
+                string uploadedFileName = ImageFileName.FileName;
+
+                string uploadedFileExtension = System.IO.Path.GetExtension(uploadedFileName);
+
+                string fileNameToUse = Guid.NewGuid().ToString() + uploadedFileExtension;
+
+                string savePath = Path.Combine(_environment.WebRootPath, "img/", fileNameToUse);
+
+
+                FileStream stream = new FileStream(savePath, FileMode.Create);
+
+                ImageFileName.CopyTo(stream);
+
+                food.ImageFileName = fileNameToUse;
+                // Veritabanına kaydetme işlemi
                 _context.Add(food);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", food.CategoryId);
@@ -95,29 +115,19 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food)
+
+        public async Task<IActionResult> Edit(int id,[Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food, IFormFile ImageFileName)
         {
-            
+
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(food);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FoodExists(food.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(food);
+                _context.SaveChanges();
+
                 return RedirectToAction(nameof(Index));
             }
+
+
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", food.CategoryId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", food.StateId);
             return View(food);
@@ -152,13 +162,11 @@ namespace QRMenu_Mvc.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Food'  is null.");
             }
-            var food = await _context.Food.FindAsync(id);
-            if (food != null)
-            {
-                _context.Food.Remove(food);
-            }
-            
-            await _context.SaveChangesAsync();
+            Food food = _context.Food!.Find(id)!;
+
+            food.StateId = 0;
+            _context.Food.Update(food);
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 

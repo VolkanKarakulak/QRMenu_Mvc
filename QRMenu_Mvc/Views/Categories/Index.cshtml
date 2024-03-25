@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Categories</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -18,9 +18,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
-            </th>
+           
             <th>
                 @Html.DisplayNameFor(model => model.State)
             </th>
@@ -39,9 +37,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.State.Name)
             </td>

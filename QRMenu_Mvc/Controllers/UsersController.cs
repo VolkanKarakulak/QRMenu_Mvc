@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Identity.Owin;
+﻿//using Microsoft.AspNet.Identity;
+
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -66,42 +68,7 @@ public class UsersController : Controller
 
     public async Task<IActionResult> Edit(string id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
 
-        var user = _signInManager.UserManager.FindByIdAsync(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return View(user);
-    }
-
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Edit(AppUser appUser)
-    {
-        AppUser existingAppUser = _signInManager.UserManager.FindByIdAsync(appUser.Id).Result;
-
-        existingAppUser.Email = appUser.Email;
-        existingAppUser.Name = appUser.Name;
-        existingAppUser.PhoneNumber = appUser.PhoneNumber;
-        existingAppUser.StateId = appUser.StateId;
-        existingAppUser.UserName = appUser.UserName;
-       await _signInManager.UserManager.UpdateAsync(existingAppUser);
-
-        return Ok();
-    }
-
-    // GET: Users/Delete/5
-   //[Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> Delete(string id)
-    {
         if (id == null)
         {
             return NotFound();
@@ -112,9 +79,46 @@ public class UsersController : Controller
         {
             return NotFound();
         }
+        ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Id", user.BrandId);
+        ViewData["StateId"] = new SelectList(_context.State, "Id", "Name", user.StateId);
 
         return View(user);
     }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Edit(string id,[Bind("Id,Name,UserName,SurName,Address,Email,RegisterDate,PostalCode,PhoneNumber,StateId,BrandId")] AppUser appUser)
+    {
+      
+           
+                var user = await _signInManager.UserManager.FindByIdAsync(id.ToString());
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                // Kullanıcı verilerini güncelle
+                user.UserName = appUser.UserName;
+                user.Name = appUser.Name;
+                user.SurName = appUser.SurName;  
+                user.Email = appUser.Email; 
+                user.PostalCode = appUser.PostalCode;
+                user.PhoneNumber = appUser.PhoneNumber;
+                user.Address = appUser.Address;
+                user.StateId = appUser.StateId;
+                user.BrandId = appUser.BrandId;
+
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+        // ModelState geçerli değilse, tekrar view'e orijinal veriyi yükleyin
+        ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name", appUser.BrandId);
+        ViewData["StateId"] = new SelectList(_context.State, "Id", "Name", appUser.StateId);
+        return RedirectToAction("Index");
+    }
+
 
     // POST: Users/Delete/5
     [HttpPost, ActionName("Delete")]
@@ -134,24 +138,30 @@ public class UsersController : Controller
         return RedirectToAction("Index");
     }
     public ViewResult LogIn()
-        {
+    {
             return View();
-        }
+    }
 
-        [HttpPost] // sunucuya bir şey göndermek için
-        public ActionResult LogIn(string userName, string passWord)
-        {
+    [HttpPost] // sunucuya bir şey göndermek için
+    public ActionResult LogIn(string userName, string passWord)
+    {
         Microsoft.AspNetCore.Identity.SignInResult signInResult;
         AppUser appUser = _signInManager.UserManager.FindByNameAsync(userName).Result;
 
         if (appUser == null)
-            {
-                return RedirectToAction("LogIn");
-            }
+        {
+            return RedirectToAction("LogIn");
+        }
 
         signInResult = _signInManager.PasswordSignInAsync(appUser, passWord, false, false).Result;
 
         return RedirectToAction("Index", "Home");
+    }
+
+    public async Task<IActionResult> LogOut()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login", "Users");
     }
 }
 

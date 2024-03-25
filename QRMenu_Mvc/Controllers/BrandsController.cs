@@ -14,7 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace QRMenu_Mvc.Controllers
 {
-    [Authorize(Roles = "Admin, BrandAdmin")]
+    [Authorize(Roles = "Admin, BrandAdmin, RestaurantAdmin")]
     public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -109,7 +109,7 @@ namespace QRMenu_Mvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "BrandAdmin")]
-        [Authorize(Policy = "BrdAdmin")]
+        //[Authorize(Policy = "BrdAdmin")] // hem policy hem roles aynı ayna olmaz
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PostalCode,Address,Phone,EMail,RegisterDate,TaxNumber,WebbAddress,StateId")] Brand brand)
         {
             if (User.HasClaim("BrandId", brand.Id.ToString()) == false)
@@ -146,8 +146,11 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Brands/Delete/5
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
+
             if (id == null || _context.Brand == null)
             {
                 return NotFound();
