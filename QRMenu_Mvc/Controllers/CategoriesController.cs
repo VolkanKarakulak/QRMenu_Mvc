@@ -74,7 +74,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Categories/Edit/5
-        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
+        [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Category == null)
@@ -97,14 +97,10 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
-
+        [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StateId,RestaurantId")] Category category)
         {
-            if (User.HasClaim("RestaurantId", category.RestaurantId.ToString()) == false)
-            {
-                return Unauthorized();
-            }
+           
             if (id != category.Id)
             {
                 return NotFound();
@@ -158,20 +154,23 @@ namespace QRMenu_Mvc.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "RestaurantAdmin,BrandAdmin")]
+        [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Category == null)
+            if (User.HasClaim("RestautantId", id.ToString()) || User.IsInRole("BrandAdmin"))
             {
-                return Problem("Entity set 'ApplicationDbContext.Category'  is null.");
+                var category = _context.Category!.FindAsync(id).Result;
+                category!.StateId = 0;
+                _context.Category.Update(category);
+
+                var foods = _context.Food.Where(f => f.CategoryId == category.Id);
+                foreach (Food food in foods)
+                {
+                    food.StateId = 0;
+                    _context.Food.Update(food);
+                }
+                await _context.SaveChangesAsync();
             }
-            var category = await _context.Category.FindAsync(id);
-            if (category != null)
-            {
-                _context.Category.Remove(category);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

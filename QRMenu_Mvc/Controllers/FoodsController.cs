@@ -62,11 +62,15 @@ namespace QRMenu_Mvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "RestaurantAdmin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food, IFormFile ImageFileName)
+        public async Task<IActionResult> Create(int id,[Bind("Id,Name,Price,Description,ImageFileName,CategoryId,StateId")] Food food, IFormFile ImageFileName)
         {
-            
-            if (ModelState.IsValid)
+            if (User.HasClaim("RestaurantId", id.ToString()) || User.IsInRole("RestaurantAdmin"))
             {
+                return Unauthorized();
+            }
+
+                if (ModelState.IsValid)
+                {
                 string uploadedFileName = ImageFileName.FileName;
 
                 string uploadedFileExtension = System.IO.Path.GetExtension(uploadedFileName);

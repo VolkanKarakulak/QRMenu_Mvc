@@ -81,7 +81,7 @@ namespace QRMenu_Mvc.Controllers
             applicationUser.RegisterDate = DateTime.Today;
             applicationUser.StateId = 1;
             applicationUser.UserName = "RestAdmin" + restaurant.Id.ToString();
-            _userManager.CreateAsync(applicationUser, "RestAdmin123!").Wait();
+            _userManager.CreateAsync(applicationUser, "RestAdmin124!").Wait();
             _userManager.AddToRoleAsync(applicationUser, "RestaurantAdmin").Wait();
             claim = new Claim("RestaurantId", restaurant.Id.ToString());
             _userManager.AddClaimAsync(applicationUser, claim).Wait();
@@ -124,42 +124,23 @@ namespace QRMenu_Mvc.Controllers
         [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Phone,PostalCode,AddressDetail,DateTime,StateId,BrandId")] Restaurant restaurant)
         {
-            if (User.HasClaim("BrandId", restaurant.Id.ToString()) == false)
+            if (User.HasClaim("RestaurantId", id.ToString()) || User.IsInRole("BrandAdmin"))
             {
-                return Unauthorized();
+                _context.Entry(restaurant).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
             }
             if (id != restaurant.Id)
             {
-                return NotFound();
-            }
+                return BadRequest("Bu kimliğe sahip bir restoran yok.");
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(restaurant);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RestaurantExists(restaurant.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["BrandId"] = new SelectList(_context.Brand, "Id", "Name", restaurant.BrandId);
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name", restaurant.StateId);
-            return View(restaurant);
+            return RedirectToAction("Index");
         }
 
         // GET: Restaurants/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Restaurant == null)
@@ -171,6 +152,7 @@ namespace QRMenu_Mvc.Controllers
                 .Include(r => r.Brand)
                 .Include(r => r.States)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (restaurant == null)
             {
                 return NotFound();
@@ -182,19 +164,32 @@ namespace QRMenu_Mvc.Controllers
         // POST: Restaurants/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "BrandAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            
-            if (_context.Restaurant == null)
+            if (User.HasClaim("BrandId", id.ToString()) || User.IsInRole("BrandAdmin"))
             {
-                return Problem("Entity set 'ApplicationDbContext.Restaurant'  is null.");
-            }
-            Restaurant restaurant = _context.Restaurant!.Find(id)!;
 
-            restaurant.StateId = 0;
-            _context.Restaurant.Update(restaurant);
-            _context.SaveChanges();
+                Restaurant restaurant = _context.Restaurant!.Find(id)!;
+
+                restaurant.StateId = 0;
+                _context.Restaurant.Update(restaurant);
+                var categories = _context.Category.Where(c => c.RestaurantId == restaurant.Id);
+                foreach (Category category in categories)
+                {
+                    category.StateId = 0;
+                    _context.Category.Update(category);
+
+                    var foods = _context.Food.Where(f => f.CategoryId == category.Id);
+                    foreach (Food food in foods)
+                    {
+                        food.StateId = 0;
+                        _context.Food.Update(food);
+                    }
+                }
+                await _context.SaveChangesAsync();
+
+            }
             return RedirectToAction(nameof(Index));
         }
     

@@ -45,7 +45,7 @@ namespace QRMenu_Mvc.Models
             [ForeignKey("StateId")]
             public State? State { get; set; }
 
-            public virtual List<Brand>? Brands { get; set; }
+            public virtual List<Restaurant>? Restaurants { get; set; }
             public virtual List<AppUser>? AppUsers { get; set; }
     }
 }

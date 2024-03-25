@@ -50,6 +50,7 @@ public class UsersController : Controller
     }
 
     // GET: Users/Create
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name");
@@ -59,13 +60,14 @@ public class UsersController : Controller
 
     // POST: Users/Create
     [HttpPost]
-    //[ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(AppUser appUser, string password)
     {
         await _signInManager.UserManager.CreateAsync(appUser, password);
         return RedirectToAction("Index");
     }
-
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(string id)
     {
 
@@ -91,8 +93,7 @@ public class UsersController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(string id,[Bind("Id,Name,UserName,SurName,Address,Email,RegisterDate,PostalCode,PhoneNumber,StateId,BrandId")] AppUser appUser)
     {
-      
-           
+             
                 var user = await _signInManager.UserManager.FindByIdAsync(id.ToString());
                 if (user == null)
                 {
@@ -122,8 +123,8 @@ public class UsersController : Controller
 
     // POST: Users/Delete/5
     [HttpPost, ActionName("Delete")]
-    //[ValidateAntiForgeryToken]
-    //[Authorize(Roles = "Administrator")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
 

@@ -12,9 +12,11 @@ using QRMenu_Mvc.Models;
 using QRMenu_Mvc.Data;
 
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QRMenu_Mvc.Controllers
 {
+    [Authorize(Roles = "Admin, BrandAdmin")]
     public class AppRolesController : Controller
     {
         private readonly RoleManager<AppRole> _roleManager;

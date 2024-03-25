@@ -15,6 +15,9 @@ namespace QRMenu_Mvc.Controllers
 
         public IActionResult Index()
         {
+
+
+
             return View();
         }
 

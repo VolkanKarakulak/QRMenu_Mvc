@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\AppRoles\Create.cshtml" />
+    <Content Remove="Views\AppRoles\Delete.cshtml" />
+    <Content Remove="Views\AppRoles\Details.cshtml" />
+    <Content Remove="Views\AppRoles\Edit.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EcoCore" Version="7.0.0.15494" />
     <PackageReference Include="Microsoft.AspNet.Identity.Owin" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.28" />

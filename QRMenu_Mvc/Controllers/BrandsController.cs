@@ -14,7 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace QRMenu_Mvc.Controllers
 {
-    [Authorize(Roles = "Admin, BrandAdmin, RestaurantAdmin")]
+   
     public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,6 +27,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Brands
+        [Authorize(Roles = "Admin, BrandAdmin, RestaurantAdmin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Brand.Include(b => b.State);
@@ -34,6 +35,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Brands/Details/5
+        [Authorize(Roles = "Admin, BrandAdmin, RestaurantAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Brand == null)
@@ -53,6 +55,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Brands/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["StateId"] = new SelectList(_context.Set<State>(), "Id", "Name");
@@ -87,6 +90,7 @@ namespace QRMenu_Mvc.Controllers
         }
 
         // GET: Brands/Edit/5
+        [Authorize(Roles = "Admin, BrandAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Brand == null)
@@ -108,7 +112,7 @@ namespace QRMenu_Mvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "BrandAdmin")]
+        [Authorize(Roles = "Admin, BrandAdmin")]
         //[Authorize(Policy = "BrdAdmin")] // hem policy hem roles aynı ayna olmaz
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PostalCode,Address,Phone,EMail,RegisterDate,TaxNumber,WebbAddress,StateId")] Brand brand)
         {
